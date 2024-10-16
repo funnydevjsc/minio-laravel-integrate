@@ -50,33 +50,37 @@ After publishing the package assets a configuration file will be located at <cod
 
 ``` php
 <?php
-
 namespace App\Console\Commands;
 
-use FunnyDev\Ninepay\NinepaySdk;
-use Illuminate\Console\Command;
+use FunnyDev\MiniIO\MinIOSdk;
+use FunnyDev\MiniIO\MinIOGroups;
+use FunnyDev\MiniIO\MinIOPolicies;
+use FunnyDev\MiniIO\MinIOUsers;
+use FunnyDev\MiniIO\MinIOBuckets;
 
-class NinepayTestCommand extends Command
+class MinIOTestCommand extends Command
 {
-    protected $signature = 'minio:bucket-tests';
+    protected $signature = 'minio:test';
 
-    protected $description = 'Test Ninepay SDK';
+    protected $description = 'Test MinIO SDK';
 
     public function __construct()
     {
         parent::__construct();
     }
 
-    public function handle()
+    public function handle(): void
     {
-        $instance = new MinIO();
-        echo $instance->create_payment(
-            'INV-test-01',
-            10000,
-            'Description-test-01',
-            'http://localhost:8000/return',
-            'http://localhost:8000/back'
-        );
+        // SDK test
+        $instance = new MinIOSdk();
+        echo $instance->login() ? 'Login successfully' : 'Failed to login';
+        
+        // Groups test
+        $groups = new MinIOGroups();
+        $response = $groups->list();
+        echo is_array($response) && isset($response['groups']) && is_array($response['groups']) ? 'Get groups list successfully' : 'Failed to get groups list'
+        
+        ...
     }
 }
 ```
