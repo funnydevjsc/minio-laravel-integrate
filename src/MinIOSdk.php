@@ -32,7 +32,7 @@ class MinIOSdk
             'Sec-Fetch-Mode' => 'cors',
             'Sec-Fetch-Site' => 'same-origin',
             'sec-ch-ua-platform' => '"macOS"',
-            'token' => $this->cookie
+            'cookie' => $this->cookie
         ];
         $this->cookies = new CookieJar();
         $this->client = new Client();
