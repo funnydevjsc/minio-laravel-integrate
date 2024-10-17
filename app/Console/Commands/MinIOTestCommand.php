@@ -32,12 +32,13 @@ class MinIOTestCommand extends Command
         echo $logged_in ? "Login successfully\n" : "Failed to login\n";
 
         if ($logged_in) {// Groups test
-            $groups = new MinIOGroups();
-            $response = $groups->list();
-            echo is_array($response) && isset($response['groups']) && is_array($response['groups']) ? "Get groups list successfully\n" : "Failed to get groups list\n";
-            $groups->create(name: 'new-group', members: ['user1', 'user2']);
-            $groups->update(name: 'new-group', enable: true, members: ['user1', 'user2', 'user3']);
-            $groups->update_policies(name: 'new-group', policies: ['policy1', 'policy2']);
+            // Users test
+            $users = new MinIOUsers();
+            $response = $users->list();
+            echo is_array($response) && isset($response['users']) && is_array($response['users']) ? "Get users list successfully\n" : "Failed to get users list\n";
+            $users->create(access_key: 'access-key', secret_key: 'secret-key', groups: ['group1', 'group2'], policies: ['policy1', 'policy2']);
+            $users->update(access_key: 'access-key', secret_key: 'secret-key', enable: true, groups: ['group1'], policies: ['policy1', 'policy2', 'policy3']);
+            $users->update_password(user: 'access-key', new_secret_key: 'new-secret-key');
 
             // Policies test
             $policies = new MinIOPolicies();
@@ -82,20 +83,19 @@ class MinIOTestCommand extends Command
             $new_policy = [];
             $policies->update(name: 'new-policy', rule: json_encode($new_policy));
 
+            $groups = new MinIOGroups();
+            $response = $groups->list();
+            echo is_array($response) && isset($response['groups']) && is_array($response['groups']) ? "Get groups list successfully\n" : "Failed to get groups list\n";
+            $groups->create(name: 'new-group', members: ['access-key']);
+            $groups->update(name: 'new-group', enable: true, members: []);
+            $groups->update_policies(name: 'new-group', policies: ['policy1', 'policy2']);
+
             // Buckets test
             $buckets = new MinIOBuckets();
             $response = $buckets->list();
             echo is_array($response) && isset($response['buckets']) && is_array($response['buckets']) ? "Get buckets list successfully\n" : "Failed to get buckets list\n";
             $buckets->create(name: 'new-bucket', quota: 1099511627776, retention: 30, retention_mode: 'compliance', locking: true); // Create 1Tb bucket for 30 days with object locking
             $buckets->update(name: 'new-bucket', attribute: 'quota', data: ['quota' => 1099511627776]);
-
-            // Users test
-            $users = new MinIOUsers();
-            $response = $users->list();
-            echo is_array($response) && isset($response['users']) && is_array($response['users']) ? "Get users list successfully\n" : "Failed to get users list\n";
-            $users->create(access_key: 'access-key', secret_key: 'secret-key', groups: ['group1', 'group2'], policies: ['policy1', 'policy2']);
-            $users->update(access_key: 'access-key', secret_key: 'secret-key', enable: true, groups: ['group1'], policies: ['policy1', 'policy2', 'policy3']);
-            $users->update_password(user: 'access-key', new_secret_key: 'new-secret-key');
 
             // Undo test
             $buckets->delete(name: 'new-bucket');

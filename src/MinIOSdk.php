@@ -2,6 +2,7 @@
 
 namespace FunnyDev\MinIO;
 
+use Exception;
 use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Cookie\SetCookie;
 use GuzzleHttp\Exception\GuzzleException;
@@ -23,7 +24,8 @@ class MinIOSdk
         'Sec-Fetch-Dest' => 'empty',
         'Sec-Fetch-Mode' => 'cors',
         'Sec-Fetch-Site' => 'same-origin',
-        'sec-ch-ua-platform' => '"macOS"'
+        'sec-ch-ua-platform' => '"macOS"',
+        'token' => 'token=AEe+glQb1VwdXDnRynkjpHuNSKU6ZckowHfg4oSq52ush5Qmj1xhjb/AIbOqNiR91+DkfwpDaz/p8vQqbI71BfOdj3OWNl7F00nDwTpsA0FUhW9WSmBPlz/unGIorWpkyPc0VWtXdxGio77xOGkbcN7EoCKK70HD9aRFHHSKNipr7p+NaUh37s4aukZzJQw81vAPLijoOUcaH/qMRXDBSC145uiwrteHmV0CDEId2nQ73CU8QWxeZ6XGhO5DlI0nBxGRwrdOF8965E3Raec5NjKOxjqDUVUjsgQdUB1orQXNLctFS2cWWY2c3xsTV8zCryS7HAg8dT6Q88ZXzUg0LOKZVCuincjlE4J4MOcvkrIIFOq84gIyUxZpzIRUAEcRgevb1Ne40doIfr3C3gg12tUlZ88MI9Vz7KC/XHEvtdtmrshNOIeZBCxd2n8uL4mXKVx78I9+pgdJOjYmtcdzfT6lNQs1vyIs+G7gD6jitENJXOQBoeEUr0C+TDVfq0+vp6/ST6VTtvCRd21hXlwM90CPCceGo37LrBTuMs/08Ro='
     ];
     private CookieJar $cookies;
     private Client $client;
@@ -34,7 +36,7 @@ class MinIOSdk
         $this->access_key = empty($accessKey) ? Config::get('minio.access_key') : $accessKey;
         $this->secret_key = empty($secretKey) ? Config::get('minio.secret_key') : $secretKey;
         $this->cookies = new CookieJar();
-        $this->client = new Client(['headers' => $this->header, 'http_errors' => false]);
+        $this->client = new Client();
     }
 
     public function parse($data): array
@@ -48,7 +50,7 @@ class MinIOSdk
                 $tmp = json_decode($tmp, true);
             }
             return $tmp ?? ['status' => false, 'message' => 'The post param has some wrong type of values'];
-        } catch (\Exception) {
+        } catch (Exception) {
             return ['status' => false, 'message' => 'The post param has some wrong type of values'];
         }
     }
@@ -72,7 +74,9 @@ class MinIOSdk
             'timeout' => 60,
             'headers' => $this->header,
             'cookies' => $this->cookies,
-            'json' => $param
+            'json' => $param,
+            'allow_redirects' => false,
+            'http_errors' => true
         ]);
         foreach ($res->getHeader('Set-Cookie') as $key => $header) {
             $cookie = SetCookie::fromString($header);
