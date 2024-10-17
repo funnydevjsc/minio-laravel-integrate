@@ -89,7 +89,7 @@ class MinIOSdk
             }
             return '';
         } else {
-            return ['status' => false, 'message' => 'HTTP error '. $res->getStatusCode()];
+            return ['status' => false, 'code' => $res->getStatusCode(), 'message' => $res->getBody()->getContents()];
         }
     }
 
@@ -101,7 +101,7 @@ class MinIOSdk
         $this->send('GET', '/api/v1/login', [], 'body');
         $this->send('POST', '/api/v1/login', ['accessKey' => $this->access_key, 'secretKey' => $this->secret_key], 'body');
         $response = $this->send('GET', '/api/v1/session');
-        if ($response['status'] == 'ok') {
+        if ($response['status'] === 'ok') {
             return true;
         }
         return false;
