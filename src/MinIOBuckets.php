@@ -14,9 +14,9 @@ class MinIOBuckets
      * @throws GuzzleException
      * @throws Exception
      */
-    public function __construct(string $server='', string $accessKey='', string $secretKey='')
+    public function __construct(string $server='', string $cookie='')
     {
-        $this->sdk = new MinIOSdk($server, $accessKey, $secretKey);
+        $this->sdk = new MinIOSdk($server, $cookie);
         if (! $this->sdk->login()) {
             throw new Exception('Failed to login to MinIO');
         }

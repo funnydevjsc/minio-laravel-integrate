@@ -12,29 +12,28 @@ use Illuminate\Support\Facades\Config;
 class MinIOSdk
 {
     private string $server;
-    private string $access_key;
-    private string $secret_key;
-    private array $header = [
-        'connection' => 'keep-alive',
-        'user-agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36',
-        'content-type' => 'application/json',
-        'sec-ch-ua' => '"Google Chrome";v="129", "Not=A?Brand";v="8", "Chromium";v="129"',
-        'priority' => 'u=1, i',
-        'sec-ch-ua-mobile' => '?0',
-        'Sec-Fetch-Dest' => 'empty',
-        'Sec-Fetch-Mode' => 'cors',
-        'Sec-Fetch-Site' => 'same-origin',
-        'sec-ch-ua-platform' => '"macOS"',
-        'token' => 'token=AEe+glQb1VwdXDnRynkjpHuNSKU6ZckowHfg4oSq52ush5Qmj1xhjb/AIbOqNiR91+DkfwpDaz/p8vQqbI71BfOdj3OWNl7F00nDwTpsA0FUhW9WSmBPlz/unGIorWpkyPc0VWtXdxGio77xOGkbcN7EoCKK70HD9aRFHHSKNipr7p+NaUh37s4aukZzJQw81vAPLijoOUcaH/qMRXDBSC145uiwrteHmV0CDEId2nQ73CU8QWxeZ6XGhO5DlI0nBxGRwrdOF8965E3Raec5NjKOxjqDUVUjsgQdUB1orQXNLctFS2cWWY2c3xsTV8zCryS7HAg8dT6Q88ZXzUg0LOKZVCuincjlE4J4MOcvkrIIFOq84gIyUxZpzIRUAEcRgevb1Ne40doIfr3C3gg12tUlZ88MI9Vz7KC/XHEvtdtmrshNOIeZBCxd2n8uL4mXKVx78I9+pgdJOjYmtcdzfT6lNQs1vyIs+G7gD6jitENJXOQBoeEUr0C+TDVfq0+vp6/ST6VTtvCRd21hXlwM90CPCceGo37LrBTuMs/08Ro='
-    ];
+    private string $cookie;
+    private array $header;
     private CookieJar $cookies;
     private Client $client;
 
-    public function __construct(string $server='', string $accessKey='', string $secretKey='')
+    public function __construct(string $server='', string $cookie='')
     {
         $this->server = empty($server) ? Config::get('minio.server') : $server;
-        $this->access_key = empty($accessKey) ? Config::get('minio.access_key') : $accessKey;
-        $this->secret_key = empty($secretKey) ? Config::get('minio.secret_key') : $secretKey;
+        $this->cookie = empty($cookie) ? Config::get('minio.cookie') : $cookie;
+        $this->header = [
+            'connection' => 'keep-alive',
+            'user-agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36',
+            'content-type' => 'application/json',
+            'sec-ch-ua' => '"Google Chrome";v="129", "Not=A?Brand";v="8", "Chromium";v="129"',
+            'priority' => 'u=1, i',
+            'sec-ch-ua-mobile' => '?0',
+            'Sec-Fetch-Dest' => 'empty',
+            'Sec-Fetch-Mode' => 'cors',
+            'Sec-Fetch-Site' => 'same-origin',
+            'sec-ch-ua-platform' => '"macOS"',
+            'token' => $this->cookie
+        ];
         $this->cookies = new CookieJar();
         $this->client = new Client();
     }
@@ -102,8 +101,6 @@ class MinIOSdk
      */
     public function login(): bool
     {
-        $this->send('GET', '/api/v1/login', [], 'body');
-        $this->send('POST', '/api/v1/login', ['accessKey' => $this->access_key, 'secretKey' => $this->secret_key], 'body');
         $response = $this->send('GET', '/api/v1/session');
         if ($response['status'] === 'ok') {
             return true;

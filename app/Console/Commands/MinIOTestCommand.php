@@ -31,7 +31,7 @@ class MinIOTestCommand extends Command
         $logged_in = $instance->login();
         echo $logged_in ? "Login successfully\n" : "Failed to login\n";
 
-        if ($logged_in) {// Groups test
+        if ($logged_in) {
             // Users test
             $users = new MinIOUsers();
             $response = $users->list();
@@ -83,6 +83,7 @@ class MinIOTestCommand extends Command
             $new_policy = [];
             $policies->update(name: 'new-policy', rule: json_encode($new_policy));
 
+            // Groups test
             $groups = new MinIOGroups();
             $response = $groups->list();
             echo is_array($response) && isset($response['groups']) && is_array($response['groups']) ? "Get groups list successfully\n" : "Failed to get groups list\n";

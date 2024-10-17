@@ -46,8 +46,7 @@ If publishing files fails, please create corresponding files at the path `config
 
 return [
     'server' => env('MINIO_SERVER', 'http://localhost:9001'), //This is dashboard server url, not api server
-    'access_key' => env('MINIO_ACCESS_KEY', 'minioadmin'),
-    'secret_key' => env('MINIO_SECRET_KEY', 'minioadmin'),
+    'cookie' => env('MINIO_COOKIE', 'token=') //This is your admin of MinIO cookie on browser, do not share this information to anyone
 ];
 ```
 

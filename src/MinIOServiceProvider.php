@@ -43,7 +43,7 @@ class MinIOServiceProvider extends ServiceProvider
             $server = $app['config']['minio.api_key'];
             $accessKey = $app['config']['minio.access_key'];
             $secretKey = $app['config']['minio.secret_key'];
-            return new \FunnyDev\MinIO\MinIOSdk($server, $accessKey, $secretKey);
+            return new \FunnyDev\MinIO\MinIOSdk($server, $cookie);
         });
     }
 }
