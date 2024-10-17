@@ -79,11 +79,11 @@ class MinIOUsers
     /**
      * @throws GuzzleException
      */
-    public function update_password(string $user, string $secret_key): array|string
+    public function update_password(string $user, string $new_secret_key): array|string
     {
         $param = [
             "selectedUser" => $user,
-            "secretKey" => $secret_key
+            "secretKey" => $new_secret_key
         ];
 
         return $this->sdk->send('POST', '/api/v1/account/change-user-password', $param);
